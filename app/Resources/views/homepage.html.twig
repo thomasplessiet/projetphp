@@ -1,0 +1,24 @@
+{% extends "layout.html.twig" %}
+
+{% block welcome %}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        Bienvenue <strong>{{ app.user.username }}</strong>
+    {% else %}
+        SchoolEvents
+    {% endif %}
+{% endblock%}  
+
+{% block card %}
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fa fa-home"> Bienvenue sur le projet SchoolEvents</i> 
+    </div>
+    <div class="card-body text-center">
+       <img src="{{ asset('assets/img/event.png') }}" />
+       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fringilla tincidunt velit nec rutrum. Praesent placerat massa auctor pulvinar ultricies. Aenean sodales ac nibh tincidunt congue. Donec et purus convallis quam sagittis dictum vel sit amet nunc. Quisque vel nisi ultrices, maximus dui at, pharetra ex. Fusce id tellus at eros vestibulum consectetur ac quis mauris. Proin non mattis lorem. Fusce finibus mi ipsum, in mollis erat euismod vestibulum. Morbi eget urna volutpat, tempus sapien quis, convallis quam. Integer cursus orci urna, at efficitur urna congue vel. Duis rhoncus non lectus venenatis congue. Nullam facilisis consectetur condimentum. Nullam ut placerat neque.</p>
+    </div>
+    <div class="card-footer small text-muted">Projet réalisé par Le Bris Paul, Xiong Franck & Plessiet Thomas</div>
+</div>
+{% endblock%} 
+   
+
