@@ -15,26 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="utilisateurs")
  */
 class User extends BaseUser{
-    
-    /**
 
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Groupe", cascade={"persist"})
-
-     */
-    private $groupe;
-    
-    public function setGroupe(Groupe $groupe)
-    {
-      $this->groupe = $groupe;
-      return $this;
-    }
-  
-    public function getGroupe()
-    {
-      return $this->groupe;
-    }
-    
-    
     /**
      *
      * @var integer

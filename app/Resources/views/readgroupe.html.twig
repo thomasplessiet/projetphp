@@ -25,8 +25,10 @@
             <thead>
                 <tr>
                     <th>Nom</th>
-                    <th>Groupe</th>
                     <th>Rôle</th>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <th>Supprimer</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -36,17 +38,15 @@
                             {{ user.username }}
                         </td>
                         <td>
-                            {% for groupe in user.groupe %}
-                                {{ groupe.nom }}
-                            {% endfor %}
-                        </td>
-                        <td>
                             {% if user.roles|length >= 2 %}
                                 PROF
                             {% else %}
                                 ELEVE
                             {% endif %}
                         </td>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <td><a href="{{path('deleteUser', {'id': user.id} )}}" onclick="return confirm('Êtes vous sûr de vouloir supprimer le groupe : {{ user.username}}')">Supprimer</a></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
 
@@ -57,6 +57,7 @@
             <thead>
                 <tr>
                     <th>Nom du groupe</th>
+                    <th>Membre(s)</th>
                     {% if is_granted('ROLE_ADMIN') %}
                         <th>Modifier</th>
                         <th>Supprimer</th>
@@ -68,6 +69,11 @@
                     <tr>
                         <td>
                             {{ groupe.nom }}
+                        </td>
+                        <td>
+                            {% for user in groupe.users %}
+                                {{ user.username }}
+                            {% endfor %}
                         </td>
                         {% if is_granted('ROLE_ADMIN') %}
                             <td><a href="{{path('updateGroupe', {'id': groupe.id} )}}">Modifier</a></td>

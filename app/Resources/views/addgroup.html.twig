@@ -11,9 +11,16 @@
 {% block card %}
 <div class="card mb-3">
     <div class="card-header">
-        <i class="fa fa-edit"> Modification de l'évènement {{ groupe_nom }}</i> 
+        <i class="fa fa-plus"> Ajout d'un groupe </i> 
     </div>
     <div class="card-body">
+        {% if app.session.flashBag.has('success') %}
+            <div class="alert alert-success">
+                {% for msg in app.session.flashBag.get('success') %}
+                    {{ msg }}
+                {% endfor %}
+            </div>
+        {% endif %}
         {{ form_start(form) }}
         <div class="form-group">
             <label for="nom">Nom</label>
@@ -21,7 +28,7 @@
             {{ form_errors(form.nom) }}
         </div>
         <div class="form-group">
-            <label for="dateDebut">Changement de(s) membre(s) du groupe</label>
+            <label for="dateDebut">Ajout de membre(s) au groupe</label>
             {{ form_widget(form.users) }}
             {{ form_errors(form.users) }}
         </div>

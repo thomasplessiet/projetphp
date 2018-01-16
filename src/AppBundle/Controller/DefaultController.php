@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use AppBundle\Entity\Event;
+use AppBundle\Entity\Groupe;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -125,6 +126,49 @@ class DefaultController extends Controller
     }
     
     /**
+     * @Route("/add/group", name="addgroup")
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function addGAction(Request $request)
+    {
+        $group = new Groupe();
+
+        $form = $this->createFormBuilder($group)
+                ->add('nom', TextType::class)
+                ->add('users', EntityType::class, array(
+                    'class' => 'AppBundle:User',
+                    'choice_label' => 'username',
+                    'multiple' => true,
+                    'expanded' => true,
+                ))
+                ->add('submit', SubmitType::class, [
+                    'label' => 'Validation',
+                    'attr' => ['class' => 'btn btn-success'],
+                ])
+                ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($group);
+            $em->flush();
+
+            $request->getSession()
+                    ->getFlashBag()
+                    ->add('success', 'Groupe ajouté avec succès!')
+            ;
+
+            return $this->redirect($this->generateUrl('addgroup', array('etat' => 'succes')
+            ));
+        }
+
+        return $this->render('addgroup.html.twig', array(
+                    'form' => $form->createView(),
+        ));
+    }
+    
+    /**
      * @Route("/event/{id}/update", name="updateEvent")
      * @Security("has_role('ROLE_ADMIN')")
      */
@@ -194,13 +238,19 @@ class DefaultController extends Controller
         $groupe_name = $groupe->getNom();
         if (!$groupe) {
             throw $this->createNotFoundException(
-                    'No Event found for ID ' . $id
+                    'No Groupe found for ID ' . $id
             );
         }
 
 
         $form = $this->createFormBuilder($groupe)
                 ->add('nom', TextType::class)
+                ->add('users', EntityType::class, array(
+                    'class' => 'AppBundle:User',
+                    'choice_label' => 'username',
+                    'multiple' => true,
+                    'expanded' => true,
+                ))
                 ->add('submit', SubmitType::class, [
                     'label' => 'Modifier',
                     'attr' => ['class' => 'btn btn-success'],
@@ -225,7 +275,6 @@ class DefaultController extends Controller
                     'form' => $form->createView(), 'groupe_nom' => $groupe_name
         ));
     }
-    
     
     /**
      * @Route("/event/{id}/delete", name="deleteEvent")
@@ -263,5 +312,24 @@ class DefaultController extends Controller
                     ->add('success', 'Groupe supprimé avec succès!')
         ;
         return $this->redirect($this->generateUrl('readgroupe', array('etat' => 'succes')));
-    } 
+    }
+    
+    /**
+     * @Route("/user/{id}/delete", name="deleteUser")
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function deleteUAction($id, Request $request) {
+        $repository = $this->getDoctrine()->getRepository('AppBundle:User');
+        $event = $repository->find($id);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($event);
+        $em->flush();
+
+        $request->getSession()
+                    ->getFlashBag()
+                    ->add('success', 'User supprimé avec succès!')
+        ;
+        return $this->redirect($this->generateUrl('readgroupe', array('etat' => 'succes')));
+    }
 }

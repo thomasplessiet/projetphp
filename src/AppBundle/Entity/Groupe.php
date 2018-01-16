@@ -3,15 +3,26 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Groupe
  *
  * @ORM\Table(name="groupe")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\GroupeRepository")
+ * @UniqueEntity(
+ *     fields={"nom"}, message="Ce groupe est déjà présent dans la base de données, impossible de l'ajouter"
+ * )
  */
 class Groupe
 {
+    
+    /**
+
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\User", cascade={"persist"})
+
+     */
+    private $users;
     
     /**
      * @var int
@@ -62,6 +73,49 @@ class Groupe
     public function getNom()
     {
         return $this->nom;
+    }
+    
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add user
+     *
+     * @param \AppBundle\Entity\User $user
+     *
+     * @return Link
+     */
+    public function addTag(\AppBundle\Entity\User $user) {
+        $this->users[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * Remove user
+     *
+     * @param \AppBundle\Entity\User $user
+     */
+    public function removeTag(\AppBundle\Entity\User $user) {
+        $this->users->removeElement($user);
+    }
+
+    /**
+     * Get users
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUsers() {
+        return $this->users;
+    }
+    
+    public function __toString()
+    {
+        return $this->users;
     }
 }
 
